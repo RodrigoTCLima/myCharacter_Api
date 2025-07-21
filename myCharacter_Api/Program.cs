@@ -1,3 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+using myCharacter.Api.Data; 
+using myCharacter.Api.Models;
+using Microsoft.AspNetCore.Identity;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
