@@ -1,0 +1,60 @@
+# .gitignore para projetos .NET / Visual Studio
+
+## Arquivos e pastas de dependências e ferramentas
+# Ignora pacotes NuGet restaurados
+[Pp]ackages/
+# Ignora ferramentas locais do .NET
+tools/
+
+## Arquivos de build e saídas do compilador
+# As pastas de saída principais
+[Bb]in/
+[Oo]bj/
+
+## Arquivos gerados pelo Rider
+.idea/
+
+## Arquivos de configuração de usuário e cache do Visual Studio
+# Geralmente contém configurações locais do desenvolvedor que não devem ser compartilhadas
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+
+## Arquivos de log e diagnóstico
+*.log
+*.tlog
+*.trx
+*.coverage
+*.dotcover
+
+## Arquivos de publicação
+[Rr]elease/
+[Dd]ebug/
+publish/
+*.pubxml
+*.publish.xml
+
+## Bancos de dados locais
+# Se você usar um banco de dados local como SQL Server Express LocalDB ou SQLite
+*.mdf
+*.ldf
+*.db
+*.db-journal # Arquivo de journal do SQLite
+
+# Exceção: Se você quiser versionar um banco de dados SQLite inicial (template),
+# você pode descomentar a linha abaixo e especificar o nome do seu arquivo.
+# !my-template-database.db
+
+## Arquivos do sistema operacional
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
