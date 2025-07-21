@@ -1,5 +1,3 @@
-// Localização: myCharacter/Models/Campaign.cs
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,9 +5,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace myCharacter.Models
 {
-    /// <summary>
-    /// Representa uma campanha de RPG.
-    /// </summary>
     public class Campaign
     {
         public Campaign()

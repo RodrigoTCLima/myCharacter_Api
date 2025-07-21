@@ -1,8 +1,6 @@
-// CÓDIGO INTEGRAL E ATUALIZADO
-
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using myCharacter.Models; // Lembre-se de ajustar 'myCharacter' para o namespace do seu projeto
+using myCharacter.Models; 
 
 namespace myCharacter.Data
 {
@@ -20,7 +18,7 @@ namespace myCharacter.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // --- Definição dos Relacionamentos (Conforme nosso plano) ---
+            // --- Definição dos Relacionamentos ---
 
             // Relacionamento: User -> Campaign
             modelBuilder.Entity<ApplicationUser>()
@@ -50,19 +48,13 @@ namespace myCharacter.Data
                 .HasForeignKey(c => c.RpgSystemId)
                 .IsRequired();
 
-            // ======================= INÍCIO DA MUDANÇA =======================
-            //
-            // NOVO RELACIONAMENTO: RpgSystem -> Character
-            // Adicionamos esta configuração para formalizar o novo relacionamento
-            // que você sugeriu.
-            //
+
+            // Relacionamento: RpgSystem -> Character
             modelBuilder.Entity<RpgSystem>()
-                .HasMany(s => s.Characters) // Um RpgSystem tem muitos Characters
-                .WithOne(c => c.RpgSystem)  // Um Character tem um RpgSystem
-                .HasForeignKey(c => c.RpgSystemId) // A chave estrangeira está em Character.RpgSystemId
-                .IsRequired(); // Um personagem DEVE pertencer a um sistema de regras.
-            //
-            // ======================== FIM DA MUDANÇA =========================
+                .HasMany(s => s.Characters) 
+                .WithOne(c => c.RpgSystem)  
+                .HasForeignKey(c => c.RpgSystemId) 
+                .IsRequired(); 
         }
     }
 }

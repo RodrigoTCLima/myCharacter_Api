@@ -1,5 +1,3 @@
-// CÓDIGO INTEGRAL E ATUALIZADO
-
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
