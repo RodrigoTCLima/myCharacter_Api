@@ -11,7 +11,7 @@ namespace myCharacter.Models
 
         [Required]
         [MaxLength(100)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [MaxLength(50)]
         public string? Race { get; set; }
@@ -27,12 +27,12 @@ namespace myCharacter.Models
 
         public int RpgSystemId { get; set; }
         [ForeignKey("RpgSystemId")]
-        public virtual RpgSystem RpgSystem { get; set; }
+        public virtual RpgSystem RpgSystem { get; set; } = null!;
 
         [Required]
-        public string UserId { get; set; }
+        public string UserId { get; set; } = string.Empty;
         [ForeignKey("UserId")]
-        public virtual ApplicationUser User { get; set; }
+        public virtual ApplicationUser User { get; set; } = null!;
 
         public Guid? CampaignId { get; set; }
         [ForeignKey("CampaignId")]

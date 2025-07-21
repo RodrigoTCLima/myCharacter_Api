@@ -17,7 +17,7 @@ namespace myCharacter.Models
 
         [Required]
         [MaxLength(150)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [MaxLength(1000)]
         public string? Description { get; set; }
@@ -27,12 +27,12 @@ namespace myCharacter.Models
         // Relacionamento com RpgSystem
         public int RpgSystemId { get; set; }
         [ForeignKey("RpgSystemId")]
-        public virtual RpgSystem RpgSystem { get; set; }
+        public virtual RpgSystem RpgSystem { get; set; } = null!;
 
         // Relacionamento com ApplicationUser
-        public string UserId { get; set; }
+        public string UserId { get; set; } = string.Empty;
         [ForeignKey("UserId")]
-        public virtual ApplicationUser User { get; set; }
+        public virtual ApplicationUser User { get; set; } = null!;
 
         // Propriedade de navegação
         // Uma campanha pode ter muitos personagens.
