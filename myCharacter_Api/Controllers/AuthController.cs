@@ -2,8 +2,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using myCharacter.DTOs.Auth;
 using myCharacter.Models;
+using myCharacter.Services; 
 
-namespace myCharacter_Api.Controllers
+namespace myCharacter.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -11,47 +12,45 @@ namespace myCharacter_Api.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly TokenService _tokenService; 
 
-        public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AuthController(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            TokenService tokenService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _tokenService = tokenService; 
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto registerDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var user = new ApplicationUser
-            {
-                UserName = registerDto.Username,
-                Email = registerDto.Email
-            };
-
+            // ... (código do register sem alterações) ...
+            var user = new ApplicationUser { UserName = registerDto.Username, Email = registerDto.Email };
             var result = await _userManager.CreateAsync(user, registerDto.Password);
-            if (result.Succeeded)
-            {
-                return Ok(new { Message = "User registered successfully." });
-            }
-
-            return BadRequest(result.Errors);
+            if (!result.Succeeded) return BadRequest(result.Errors);
+            return Ok(new { Message = "User registered successfully!" });
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var user = await _userManager.FindByNameAsync(loginDto.Username);
+            if (user == null) return Unauthorized(new { Message = "Invalid credentials." });
 
-            var result = await _signInManager.PasswordSignInAsync(loginDto.Username, loginDto.Password, false, false);
-            if (result.Succeeded)
+            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+            if (!result.Succeeded) return Unauthorized(new { Message = "Invalid credentials." });
+
+            var token = _tokenService.GenerateToken(user);
+
+            return Ok(new
             {
-                return Ok(new { Message = "Login successful!", UserId = user.Id, Username = user.UserName });
-            }
-
-            return Unauthorized(new { Message = "Invalid username or password." });
+                Message = "Login successful!",
+                Token = token,
+                User = new { UserId = user.Id, Username = user.UserName }
+            });
         }
     }
 }
