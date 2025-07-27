@@ -34,6 +34,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 
 builder.Services.AddScoped<TokenService>();
 
+builder.Services.AddScoped<DbInitializer>();
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -75,5 +77,31 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+try
+{
+    // Cria um escopo de serviço temporário para resolver serviços "scoped".
+    using (var scope = app.Services.CreateScope())
+    {
+        var serviceProvider = scope.ServiceProvider;
+
+        // Pega o DbContext para poder aplicar as migrations
+        var dbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
+        await dbContext.Database.MigrateAsync();
+
+        // Pede ao provedor de serviços uma instância do nosso DbInitializer.
+        var dbInitializer = serviceProvider.GetRequiredService<DbInitializer>();
+
+        // Chama o método de seeding e espera ele terminar.
+        await dbInitializer.SeedAsync();
+    }
+}
+catch (Exception ex)
+{
+    // Se qualquer coisa der errado durante o seeding, captura a exceção.
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    // Registra o erro detalhado no log para diagnóstico.
+    logger.LogError(ex, "An error occurred during database seeding.");
+}
 
 app.Run();
