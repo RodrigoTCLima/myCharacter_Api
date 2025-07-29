@@ -24,7 +24,7 @@ namespace myCharacter.Models
         public string? CharacterSheetTemplate { get; set; }
 
         // Propriedades de navegação (relacionamentos)
-        public virtual ICollection<Campaign> Campaigns { get; set; }
-        public virtual ICollection<Character> Characters { get; set; } 
+        public ICollection<Campaign> Campaigns { get; set; }
+        public ICollection<Character> Characters { get; set; } 
     }
 }

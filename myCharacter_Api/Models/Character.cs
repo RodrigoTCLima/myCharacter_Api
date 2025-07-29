@@ -27,15 +27,15 @@ namespace myCharacter.Models
 
         public int RpgSystemId { get; set; }
         [ForeignKey("RpgSystemId")]
-        public virtual RpgSystem RpgSystem { get; set; } = null!;
+        public RpgSystem RpgSystem { get; set; } = null!;
 
         [Required]
         public string UserId { get; set; } = string.Empty;
         [ForeignKey("UserId")]
-        public virtual ApplicationUser User { get; set; } = null!;
+        public ApplicationUser User { get; set; } = null!;
 
         public Guid? CampaignId { get; set; }
         [ForeignKey("CampaignId")]
-        public virtual Campaign? Campaign { get; set; }
+        public Campaign? Campaign { get; set; }
     }
 }

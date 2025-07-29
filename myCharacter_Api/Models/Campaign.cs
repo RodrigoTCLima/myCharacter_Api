@@ -27,15 +27,15 @@ namespace myCharacter.Models
         // Relacionamento com RpgSystem
         public int RpgSystemId { get; set; }
         [ForeignKey("RpgSystemId")]
-        public virtual RpgSystem RpgSystem { get; set; } = null!;
+        public RpgSystem RpgSystem { get; set; } = null!;
 
         // Relacionamento com ApplicationUser
         public string UserId { get; set; } = string.Empty;
         [ForeignKey("UserId")]
-        public virtual ApplicationUser User { get; set; } = null!;
+        public ApplicationUser User { get; set; } = null!;
 
         // Propriedade de navegação
         // Uma campanha pode ter muitos personagens.
-        public virtual ICollection<Character> Characters { get; set; }
+        public ICollection<Character> Characters { get; set; }
     }
 }

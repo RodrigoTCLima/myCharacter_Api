@@ -12,7 +12,7 @@ namespace myCharacter.Models
         }
 
         // Propriedades de navegação para os relacionamentos
-        public virtual ICollection<Campaign> Campaigns { get; set; }
-        public virtual ICollection<Character> Characters { get; set; }
+        public ICollection<Campaign> Campaigns { get; set; }
+        public ICollection<Character> Characters { get; set; }
     }
 }
