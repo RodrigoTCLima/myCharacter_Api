@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using myCharacter.Data;
+using myCharacter.DTOs.Characters;
 using myCharacter.Models;
 
 namespace myCharacter.Controllers

@@ -1,7 +1,9 @@
-public class CreateCampaignDto
+namespace myCharacter.DTOs.Campaign
 {
-    public string Name { get; set; } = string.Empty;
-    public string? Description { get; set; }
-    public int RpgSystemId { get; set; }
+    public class CreateCampaignDto
+    {
+        public string Name { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public int RpgSystemId { get; set; }
+    }
 }
-

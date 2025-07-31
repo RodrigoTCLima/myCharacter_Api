@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using myCharacter.Data;
+using myCharacter.DTOs.Campaign;
 using myCharacter.Models;
 
 namespace myCharacter.Controllers

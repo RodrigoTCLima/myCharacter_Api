@@ -1,6 +1,9 @@
-public class RpgSystemDto
+namespace myCharacter.DTOs.RpgSystems
 {
-    public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public string? Description { get; set; }
+    public class RpgSystemDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string? Description { get; set; }
+    }
 }

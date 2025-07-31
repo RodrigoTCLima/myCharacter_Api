@@ -1,7 +1,8 @@
-using myCharacter.Models;
-
-public class UpdateCampaignDto
+namespace myCharacter.DTOs.Campaign
 {
-    public string Name { get; set; } = string.Empty;
-    public string? Description { get; set; }
+    public class UpdateCampaignDto
+    {
+        public string Name { get; set; } = string.Empty;
+        public string? Description { get; set; }
+    }
 }

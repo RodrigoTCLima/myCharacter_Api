@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using myCharacter.Data;
+using myCharacter.DTOs.RpgSystems;
 using myCharacter.Models;
 
 
