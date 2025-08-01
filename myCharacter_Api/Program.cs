@@ -10,6 +10,7 @@ using myCharacter.Models;
 using myCharacter.Services;
 using FluentValidation.AspNetCore;
 using FluentValidation;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,7 +64,47 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    // 1. Adiciona uma definição de segurança para JWT Bearer
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        // Descrição que aparece no Swagger UI
+        Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n " +
+                      "Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\n" +
+                      "Example: \"Bearer 12345abcdef\"",
+        // Nome do header
+        Name = "Authorization",
+        // Onde o header é colocado (neste caso, no cabeçalho da requisição)
+        In = ParameterLocation.Header,
+        // O tipo de esquema de segurança
+        Type = SecuritySchemeType.ApiKey,
+        // O esquema a ser usado
+        Scheme = "Bearer"
+    });
+
+    // 2. Adiciona um requisito de segurança global
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    {
+        {
+            // Define a referência ao esquema de segurança que acabamos de criar
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer" // O ID deve corresponder ao que foi definido em AddSecurityDefinition
+                },
+                Scheme = "oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header,
+            },
+            // Define os escopos (neste caso, uma lista vazia é suficiente)
+            new List<string>()
+        }
+    });
+});
+
 
 
 var app = builder.Build();
