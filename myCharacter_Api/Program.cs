@@ -8,10 +8,14 @@ using System.Text;
 using myCharacter.Data; 
 using myCharacter.Models;
 using myCharacter.Services;
+using FluentValidation.AspNetCore;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>(); 
 
 // --- Configurar a Conexão com o Banco de Dados e o DbContext ---
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
