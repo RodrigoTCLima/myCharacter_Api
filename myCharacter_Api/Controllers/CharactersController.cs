@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using myCharacter.Data;
 using myCharacter.DTOs.Characters;
 using myCharacter.Models;
@@ -81,6 +82,30 @@ namespace myCharacter.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetCharacterById), new { id = character.Id }, MapToDetailDto(character));
+        }
+
+        [HttpPost("{id}/duplicate")]
+        public async Task<ActionResult<CharacterDetailDto>> DuplicateCharacter(Guid id)
+        {
+            var userId = GetUserId();
+            var originalCharacter = await _context.Characters.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id && c.UserId == userId);
+
+            if (originalCharacter == null) return NotFound();
+
+            var newCharacter = new Character()
+            {
+                Name = originalCharacter.Name + " (Copy)",
+                Race = originalCharacter.Race,
+                Class = originalCharacter.Class,
+                Level = originalCharacter.Level,
+                SystemSpecificData = originalCharacter.SystemSpecificData,
+                RpgSystemId = originalCharacter.RpgSystemId,
+                UserId = userId
+            };
+
+            _context.Characters.Add(newCharacter);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetCharacterById), new {id = newCharacter.Id}, MapToDetailDto(newCharacter));
         }
 
         [HttpPut("{id}")]
