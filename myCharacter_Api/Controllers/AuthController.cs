@@ -12,7 +12,7 @@ namespace myCharacter.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly TokenService _tokenService; 
+        private readonly TokenService _tokenService;
 
         public AuthController(
             UserManager<ApplicationUser> userManager,
@@ -21,7 +21,7 @@ namespace myCharacter.Controllers
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _tokenService = tokenService; 
+            _tokenService = tokenService;
         }
 
         [HttpPost("register")]

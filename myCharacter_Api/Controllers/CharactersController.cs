@@ -2,10 +2,11 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using myCharacter.Data;
 using myCharacter.DTOs.Characters;
+using myCharacter.DTOs;
 using myCharacter.Models;
+using myCharacter.Helpers;
 
 namespace myCharacter.Controllers
 {
@@ -22,10 +23,22 @@ namespace myCharacter.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CharacterDto>>> GetAllCharacters()
+        public async Task<ActionResult<PagedResult<CharacterDto>>> GetAllCharacters([FromQuery] QueryParameters queryParameters)
         {
             var userId = GetUserId();
-            var characters = await _context.Characters.Where(c => c.UserId == userId).Select(c => new CharacterDto
+            var term = queryParameters.SearchTerm;
+            var query = _context.Characters.Where(c => c.UserId == userId).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                query = query.Where(c =>
+                    c.Name.Contains(term) ||
+                    (c.Race != null && c.Race.Contains(term)) ||
+                    (c.Class != null && c.Class.Contains(term))
+                    );
+            }
+            query = query.ApplySorting(queryParameters);
+            var charactersDtoQuery = query.Select(c => new CharacterDto
             {
                 Id = c.Id,
                 Name = c.Name,
@@ -34,8 +47,9 @@ namespace myCharacter.Controllers
                 Level = c.Level,
                 RpgSystemId = c.RpgSystemId,
                 CampaignId = c.CampaignId
-            }).ToListAsync();
-            return Ok(characters);
+            });
+            var pagedResult = await charactersDtoQuery.ToPagedResultAsync(queryParameters);
+            return Ok(pagedResult);
         }
 
         [HttpGet("{id}", Name = "GetCharacterById")]
@@ -105,7 +119,7 @@ namespace myCharacter.Controllers
 
             _context.Characters.Add(newCharacter);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetCharacterById), new {id = newCharacter.Id}, MapToDetailDto(newCharacter));
+            return CreatedAtAction(nameof(GetCharacterById), new { id = newCharacter.Id }, MapToDetailDto(newCharacter));
         }
 
         [HttpPut("{id}")]

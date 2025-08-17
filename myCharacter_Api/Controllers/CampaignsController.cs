@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using myCharacter.Data;
+using myCharacter.DTOs;
 using myCharacter.DTOs.Campaign;
+using myCharacter.Helpers;
 using myCharacter.Models;
 
 namespace myCharacter.Controllers
@@ -25,19 +27,25 @@ namespace myCharacter.Controllers
 
         // GET: api/Campaigns
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CampaignDto>>> GetAllCampaings()
+        public async Task<ActionResult<PagedResult<CampaignDto>>> GetAllCampaigns ([FromQuery]QueryParameters queryParameters)
         {
-            var user = GetUserId();
-            var campaigns = await _context.Campaigns
-                                    .Where(s => s.UserId == user)
-                                    .Select(c => new CampaignDto
+            var userId = GetUserId();
+            var term = queryParameters.SearchTerm;
+            var query = _context.Campaigns.Where(c => c.UserId == userId).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(term))
+                query = query.Where(c => c.Name.Contains(term));
+
+            query = query.ApplySorting(queryParameters);
+            var campaignsDtoQuery = query.Select(c => new CampaignDto
                                     {
                                         Id = c.Id,
                                         Name = c.Name,
                                         Description = c.Description,
                                         RpgSystemId = c.RpgSystemId
-                                    }).ToListAsync();
-            return Ok(campaigns);
+                                    });
+            var pagedResult = await campaignsDtoQuery.ToPagedResultAsync(queryParameters);
+            return Ok(pagedResult);
         }
 
         // Get: api/Campaigns/{id}

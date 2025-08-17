@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using myCharacter.Data;
+using myCharacter.DTOs;
 using myCharacter.DTOs.RpgSystems;
+using myCharacter.Helpers;
 using myCharacter.Models;
 
 
@@ -21,16 +23,23 @@ namespace myCharacter.Controllers
 
         // GET: api/RpgSystem 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RpgSystemDto>>> GetAllRpgSystems()
+        public async Task<ActionResult<PagedResult<RpgSystemDto>>> GetAllRpgSystems([FromQuery] QueryParameters queryParameters)
         {
-            var rpgSystems = await _context.RpgSystems.Select(s => new RpgSystemDto
-            {
-                Id = s.Id,
-                Name = s.Name,
-                Description = s.Description,
-            }).ToListAsync();
+            var term = queryParameters.SearchTerm;
+            var query = _context.RpgSystems.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(term))
+                query = query.Where(s => s.Name.Contains(term));
 
-            return Ok(rpgSystems);
+            query = query.ApplySorting(queryParameters);
+
+            var rpgSystemsDtoQuery = query.Select(s => new RpgSystemDto
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    Description = s.Description,
+            });
+            var pagedResult = await rpgSystemsDtoQuery.ToPagedResultAsync(queryParameters);
+            return Ok(pagedResult);
         }
 
         // GET: api/RpgSystem/{id}
