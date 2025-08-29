@@ -1,6 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using myCharacter.Models; 
 
@@ -11,25 +13,32 @@ namespace myCharacter.Services
         // Injetando IConfiguration para acessar as configurações do Secret Manager
         // Isso permite que o TokenService leia as chaves de configuração necessárias para gerar o token
         private readonly IConfiguration _config;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public TokenService(IConfiguration config)
+        public TokenService(IConfiguration config, UserManager<ApplicationUser> userManager)
         {
             _config = config;
+            _userManager = userManager;
         }
 
-        public string GenerateToken(ApplicationUser user)
+        public async Task<string> GenerateToken(ApplicationUser user)
         {
             // Cria uma lista de claims que serão incluídas no token
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Email, user.Email ?? string.Empty)
+                new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
 
+            // Busca Papel ("Admin" ou "Player")
+            var roles = await _userManager.GetRolesAsync(user);
+
+            // Adiciona cada papel como uma claim
+            foreach (var role in roles)
+                claims.Add(new Claim(ClaimTypes.Role, role));
             
             // Cria uma chave simétrica usando a chave secreta definida no Secret Manager
-            // A chave é usada para assinar o token, garantindo sua integridade e autenticidade
+                // A chave é usada para assinar o token, garantindo sua integridade e autenticidade
             var jwtKey = _config["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not found.");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
             
